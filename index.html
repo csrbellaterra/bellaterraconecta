@@ -13,7 +13,7 @@
 
 <div class="hero-wrap">
   <header class="site-nav hero-nav">
-    <a class="brand" href="index.html"><img src="assets/logo.jpeg" alt="Bellaterra Conecta"></a>
+    <a class="brand" href="index.html"><img src="assets/logo-mark-white.png" alt="Bellaterra Conecta"></a>
     <nav class="nav-links">
       <a href="index.html" aria-current="page">Inicio</a>
       <a href="vision.html">Nuestra Visión</a>
@@ -41,33 +41,49 @@
   const layer = document.getElementById("doors-layer");
   const heroImg = document.getElementById("hero-img");
 
-  // El hero ahora ocupa toda la pantalla (cualquier proporción), pero
-  // la imagen aérea tiene una proporción fija (16/9.06) y se pinta con
-  // object-fit:contain para no recortar nunca ninguna de las 5
-  // puertas. doors-layer se redimensiona por JS para que coincida
-  // exactamente con el rectángulo visible de la imagen, así los xPct/
-  // yPct guardados en doors-data.js siguen siendo válidos en
-  // cualquier pantalla sin tener que inventar coordenadas para móvil.
+  // El hero ocupa toda la pantalla, sin franjas a los lados. La imagen
+  // aérea tiene proporción fija (16/9.06); las 5 puertas viven todas
+  // en la franja central vertical (30%-58% de alto), así que en
+  // pantallas iguales o más anchas que la imagen (la inmensa mayoría:
+  // portátiles, monitores) rellenamos ancho Y alto recortando solo
+  // arriba/abajo — nunca se pierde ninguna puerta porque ese recorte
+  // no toca esa franja central. Solo en móvil vertical, donde SÍ se
+  // recortarían puertas por los lados (Party, Business...), volvemos
+  // a mostrar la imagen completa centrada (con el fondo desenfocado
+  // rellenando arriba/abajo) para no perder ningún punto.
   function syncDoorsLayer() {
     const iw = heroImg.naturalWidth, ih = heroImg.naturalHeight;
     if (!iw || !ih) return;
     const cw = heroImg.clientWidth, ch = heroImg.clientHeight;
     const containerRatio = cw / ch, imageRatio = iw / ih;
-    let renderW, renderH, offsetX, offsetY;
-    if (imageRatio > containerRatio) {
-      renderW = cw; renderH = cw / imageRatio; offsetX = 0; offsetY = (ch - renderH) / 2;
+    let renderW, renderH, offsetX, offsetY, visibleH;
+
+    if (containerRatio >= imageRatio) {
+      heroImg.style.objectFit = "cover";
+      const scale = cw / iw;
+      renderW = iw * scale;
+      renderH = ih * scale;
+      offsetX = 0;
+      offsetY = (ch - renderH) / 2;
+      visibleH = ch;
     } else {
-      renderH = ch; renderW = ch * imageRatio; offsetY = 0; offsetX = (cw - renderW) / 2;
+      heroImg.style.objectFit = "contain";
+      renderW = cw;
+      renderH = cw / imageRatio;
+      offsetX = 0;
+      offsetY = (ch - renderH) / 2;
+      visibleH = renderH;
     }
+
     layer.style.left = offsetX + "px";
     layer.style.top = offsetY + "px";
     layer.style.width = renderW + "px";
     layer.style.height = renderH + "px";
 
-    // En móvil vertical la franja de imagen es mucho más baja (letterbox),
-    // así que las pastillas se encogen proporcionalmente para caber sin
-    // solaparse. 850px ~= alto típico de escritorio sin recorte.
-    const escala = Math.max(0.55, Math.min(1, renderH / 850));
+    // En móvil vertical la franja de imagen visible es más baja, así
+    // que las pastillas se encogen proporcionalmente para caber sin
+    // solaparse. 850px ~= alto visible típico de escritorio.
+    const escala = Math.max(0.55, Math.min(1, visibleH / 850));
     layer.style.setProperty("--pill-scale", escala.toFixed(3));
   }
 
