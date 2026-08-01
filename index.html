@@ -10,7 +10,6 @@
 </head>
 <body>
 
-<div class="aviso-maqueta">MAQUETA v4 — zoom a cada puerta + páginas propias. Fotos y textos aún provisionales.</div>
 
 <div class="hero-wrap">
   <header class="site-nav hero-nav">
@@ -104,10 +103,14 @@
       // Deja pasar clic central/con modificador (abrir en pestaña nueva, etc.)
       if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
+      // Origen del zoom = donde ha tocado/clicado realmente el usuario,
+      // no el centro del punto — se siente más preciso y fluido.
       const rect = dot.getBoundingClientRect();
+      const dentroDelPunto = e.clientX >= rect.left - 4 && e.clientX <= rect.right + 4 && e.clientY >= rect.top - 4 && e.clientY <= rect.bottom + 4;
+      const x = dentroDelPunto ? e.clientX : rect.left + rect.width / 2;
+      const y = dentroDelPunto ? e.clientY : rect.top + rect.height / 2;
       BCTransition.zoomInto({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
+        x, y,
         color: door.accent,
         image: door.heroImage,
         href: door.id + ".html",
@@ -115,6 +118,11 @@
     });
     layer.appendChild(pill);
   });
+
+  // Precarga en segundo plano las 5 fotos de portada de las puertas,
+  // así al hacer clic la imagen ya está descargada/decodificada y el
+  // fundido no da un tirón a medio camino.
+  BC_DOORS.forEach((door) => { const im = new Image(); im.src = door.heroImage; });
 
   if (heroImg.complete) syncDoorsLayer();
   else heroImg.addEventListener("load", syncDoorsLayer);

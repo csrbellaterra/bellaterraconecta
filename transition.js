@@ -162,5 +162,29 @@
     });
   }
 
+  // El bug del botón "atrás" del navegador (no el nuestro): cuando el
+  // usuario navega con los controles nativos del navegador, Chrome/
+  // Safari suelen restaurar la página desde bfcache (memoria) tal cual
+  // quedó justo antes de salir — es decir, a mitad de nuestra propia
+  // animación, con el overlay a pantalla completa y sin que el resto
+  // de scripts se vuelvan a ejecutar. Eso es lo que se veía como una
+  // "página intermedia sin salida". pageshow con persisted=true nos
+  // avisa de esa restauración y limpiamos el overlay al instante.
+  window.addEventListener("pageshow", (e) => {
+    if (!e.persisted) return;
+    const overlay = document.getElementById(OVERLAY_ID);
+    if (!overlay) return;
+    overlay.classList.remove("activo");
+    const colorEl = overlay.querySelector(".bc-zoom-color");
+    const imgEl = overlay.querySelector(".bc-zoom-img");
+    [colorEl, imgEl].forEach((el) => {
+      if (!el) return;
+      el.style.transition = "none";
+      el.style.clipPath = "";
+      el.style.opacity = "";
+      el.style.filter = "";
+    });
+  });
+
   window.BCTransition = { zoomInto, revealOnLoad, zoomOutBack, revealHomeOnLoad };
 })();

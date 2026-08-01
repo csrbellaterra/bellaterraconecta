@@ -7,10 +7,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="doors-data.js"></script>
+<script src="transition.js"></script>
 </head>
 <body>
-
-<div class="aviso-maqueta">MAQUETA v4 — página de puerta generada, contenido real, diseño provisional.</div>
+<script>
+// Se ejecuta lo primero posible al abrir la página (antes de que el
+// resto del contenido real llegue a pintarse), así el overlay ya está
+// cubriendo la pantalla desde el primer fotograma si venimos del
+// home — sin eso, había un parpadeo del contenido real antes de que
+// arrancara la animación de revelado.
+(function () {
+  var door = BC_DOORS.find(function (d) { return d.id === "business"; });
+  BCTransition.revealOnLoad({ color: door.accent, image: door.heroImage });
+})();
+</script>
 
 <div class="door-hero-full">
   <div class="door-hero-backdrop" style="background-image:url('assets/general/entrada-1.jpg')"></div>
@@ -67,16 +78,10 @@
   <a href="index.html">← Todas las puertas</a>
 </footer>
 
-<script src="doors-data.js"></script>
-<script src="transition.js"></script>
 <script>
 (function () {
   const DOOR_ID = "business";
   const door = BC_DOORS.find(d => d.id === DOOR_ID);
-
-  document.addEventListener("DOMContentLoaded", () => {
-    BCTransition.revealOnLoad({ color: door.accent, image: door.heroImage });
-  });
 
   document.getElementById("btn-volver").addEventListener("click", (e) => {
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
