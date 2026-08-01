@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bellaterra Conecta — Cinco puertas, un mismo lugar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="aviso-maqueta">MAQUETA v4 — zoom a cada puerta + páginas propias. Fotos y textos aún provisionales.</div>
+
+<div class="hero-wrap">
+  <header class="site-nav hero-nav">
+    <a class="brand" href="index.html"><img src="assets/logo.jpeg" alt="Bellaterra Conecta"></a>
+    <nav class="nav-links">
+      <a href="index.html" aria-current="page">Inicio</a>
+      <a href="vision.html">Nuestra Visión</a>
+      <a href="sostenibilidad.html">Sostenibilidad</a>
+    </nav>
+  </header>
+
+  <section class="hero-full">
+    <div class="hero-backdrop" id="hero-backdrop" style="background-image:url('assets/general/aerea-hd.jpg')"></div>
+    <img id="hero-img" class="hero-frame-img" src="assets/general/aerea-hd.jpg" alt="Vista aérea real de la finca Bellaterra Conecta: pistas de pickleball, edificio principal y piscina">
+    <div id="doors-layer"></div>
+    <div class="hero-scrim" aria-hidden="true"></div>
+
+    <div class="hero-caption">
+      <h1><span>No es una finca.</span><br><span>Es todo lo que ocurre dentro de ella.</span></h1>
+      <p class="hero-caption-tagline"><span>Cinco formas de entrar. Un único lugar donde todo conecta.</span></p>
+    </div>
+  </section>
+</div>
+
+<script src="doors-data.js"></script>
+<script src="transition.js"></script>
+<script>
+(function () {
+  const layer = document.getElementById("doors-layer");
+  const heroImg = document.getElementById("hero-img");
+
+  // El hero ahora ocupa toda la pantalla (cualquier proporción), pero
+  // la imagen aérea tiene una proporción fija (16/9.06) y se pinta con
+  // object-fit:contain para no recortar nunca ninguna de las 5
+  // puertas. doors-layer se redimensiona por JS para que coincida
+  // exactamente con el rectángulo visible de la imagen, así los xPct/
+  // yPct guardados en doors-data.js siguen siendo válidos en
+  // cualquier pantalla sin tener que inventar coordenadas para móvil.
+  function syncDoorsLayer() {
+    const iw = heroImg.naturalWidth, ih = heroImg.naturalHeight;
+    if (!iw || !ih) return;
+    const cw = heroImg.clientWidth, ch = heroImg.clientHeight;
+    const containerRatio = cw / ch, imageRatio = iw / ih;
+    let renderW, renderH, offsetX, offsetY;
+    if (imageRatio > containerRatio) {
+      renderW = cw; renderH = cw / imageRatio; offsetX = 0; offsetY = (ch - renderH) / 2;
+    } else {
+      renderH = ch; renderW = ch * imageRatio; offsetY = 0; offsetX = (cw - renderW) / 2;
+    }
+    layer.style.left = offsetX + "px";
+    layer.style.top = offsetY + "px";
+    layer.style.width = renderW + "px";
+    layer.style.height = renderH + "px";
+
+    // En móvil vertical la franja de imagen es mucho más baja (letterbox),
+    // así que las pastillas se encogen proporcionalmente para caber sin
+    // solaparse. 850px ~= alto típico de escritorio sin recorte.
+    const escala = Math.max(0.55, Math.min(1, renderH / 850));
+    layer.style.setProperty("--pill-scale", escala.toFixed(3));
+  }
+
+  BC_DOORS.forEach((door) => {
+    const dot = document.createElement("div");
+    dot.className = "door-dot";
+    dot.dataset.doorId = door.id;
+    dot.style.left = door.xPct;
+    dot.style.top = door.yPct;
+    dot.style.background = door.accent;
+    dot.style.animationDelay = door.wiggleDelay + "s";
+    layer.appendChild(dot);
+
+    // <a> real con href — funciona sin JS (crawlers, clic derecho,
+    // abrir en pestaña nueva) y además dispara la animación cuando sí
+    // hay JS y es un clic normal.
+    const pill = document.createElement("a");
+    pill.className = "door-pill";
+    pill.dataset.doorId = door.id;
+    pill.href = door.id + ".html";
+    pill.setAttribute("aria-label", `${door.name}: ${door.tagline}`);
+    pill.style.left = door.pillX;
+    pill.style.top = door.pillY;
+    pill.style.animationDelay = door.wiggleDelay + "s";
+    pill.innerHTML = `
+      <span class="mono" style="background:${door.accent}">${door.mono}</span>
+      <span>
+        <span class="nombre">${door.name}</span>
+        <span class="tagline">${door.tagline}</span>
+      </span>
+    `;
+    pill.addEventListener("click", (e) => {
+      // Deja pasar clic central/con modificador (abrir en pestaña nueva, etc.)
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      const rect = dot.getBoundingClientRect();
+      BCTransition.zoomInto({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        color: door.accent,
+        image: door.heroImage,
+        href: door.id + ".html",
+      });
+    });
+    layer.appendChild(pill);
+  });
+
+  if (heroImg.complete) syncDoorsLayer();
+  else heroImg.addEventListener("load", syncDoorsLayer);
+  window.addEventListener("resize", syncDoorsLayer);
+  window.addEventListener("orientationchange", syncDoorsLayer);
+
+  // Si venimos de "volver" desde una puerta, cierra el zoom hacia ese
+  // punto exacto en vez de cargar la página de golpe.
+  BCTransition.revealHomeOnLoad();
+})();
+</script>
+</body>
+</html>

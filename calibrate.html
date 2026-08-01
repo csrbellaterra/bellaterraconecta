@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calibrar puntos — herramienta interna</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, 'Segoe UI', sans-serif; background: #14201a; color: #eef0ec; }
+  header { padding: 14px 20px; background: #0c130e; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 15px; margin: 0; font-weight: 600; }
+  header p { margin: 0; font-size: 12.5px; color: #9db3a3; }
+  .layout { display: flex; flex-wrap: wrap; }
+  .stage-wrap { flex: 1 1 640px; position: relative; background: #000; min-height: 60vh; }
+  #stage { position: relative; width: 100%; }
+  #img { width: 100%; display: block; }
+  .marker {
+    position: absolute; width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid #fff; transform: translate(-50%,-50%); box-shadow: 0 2px 6px rgba(0,0,0,.5);
+    cursor: grab; display: flex; align-items: center; justify-content: center;
+  }
+  .marker span { font-size: 9px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6); }
+  .marker.actual { opacity: 0.35; border-style: dashed; }
+  .panel { width: 340px; padding: 20px; background: #182620; }
+  .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: #9db3a3; margin: 0 0 12px; }
+  .puertas { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .puerta-btn {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px;
+    background: #1f3229; border: 2px solid transparent; cursor: pointer; text-align: left; color: #eef0ec; font-size: 13.5px;
+  }
+  .puerta-btn.activa { border-color: #fff; background: #24392f; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .coords { font-size: 11.5px; color: #9db3a3; margin-left: auto; font-variant-numeric: tabular-nums; }
+  textarea {
+    width: 100%; height: 220px; background: #0c130e; color: #b7e0c4; border: 1px solid #2c4437; border-radius: 8px;
+    padding: 10px; font-family: 'SF Mono', Consolas, monospace; font-size: 11.5px; resize: vertical;
+  }
+  button.copiar {
+    margin-top: 10px; width: 100%; padding: 10px; border-radius: 8px; border: none; background: #7fa584;
+    color: #0c130e; font-weight: 700; cursor: pointer; font-size: 13px;
+  }
+  .ayuda { font-size: 12px; color: #9db3a3; line-height: 1.6; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Calibrar los 5 puntos sobre la imagen real</h1>
+  <p>Elige una puerta abajo y haz clic sobre la imagen en el punto correcto. Los puntos semitransparentes son la posición actual.</p>
+</header>
+
+<div class="layout">
+  <div class="stage-wrap">
+    <div id="stage">
+      <img id="img" src="assets/general/aerea-hd.jpg" alt="Vista aérea">
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Puertas</h2>
+    <div class="puertas" id="puertas"></div>
+
+    <h2>Coordenadas nuevas (JS)</h2>
+    <textarea id="salida" readonly></textarea>
+    <button class="copiar" id="btn-copiar">Copiar al portapapeles</button>
+
+    <p class="ayuda">
+      Marca las 5. Luego copia el bloque y pégamelo en el chat — lo aplico directamente a
+      <code>doors-data.js</code>. Los puntos con borde discontinuo muestran dónde están ahora mismo.
+    </p>
+  </div>
+</div>
+
+<script src="doors-data.js"></script>
+<script>
+(function () {
+  const img = document.getElementById("img");
+  const stage = document.getElementById("stage");
+  const puertasEl = document.getElementById("puertas");
+  const salida = document.getElementById("salida");
+
+  const nuevo = {}; // doorId -> {x, y} en %
+
+  let activa = BC_DOORS[0].id;
+
+  function renderPuertas() {
+    puertasEl.innerHTML = "";
+    BC_DOORS.forEach((d) => {
+      const btn = document.createElement("button");
+      btn.className = "puerta-btn" + (d.id === activa ? " activa" : "");
+      const coords = nuevo[d.id] ? `${nuevo[d.id].x.toFixed(1)}%, ${nuevo[d.id].y.toFixed(1)}%` : "sin marcar";
+      btn.innerHTML = `<span class="dot" style="background:${d.accent}"></span> ${d.name} <span class="coords">${coords}</span>`;
+      btn.addEventListener("click", () => { activa = d.id; renderPuertas(); });
+      puertasEl.appendChild(btn);
+    });
+  }
+
+  function renderMarcadoresActuales() {
+    BC_DOORS.forEach((d) => {
+      const m = document.createElement("div");
+      m.className = "marker actual";
+      m.style.left = d.xPct;
+      m.style.top = d.yPct;
+      m.style.background = d.accent;
+      m.title = d.name + " (posición actual)";
+      stage.appendChild(m);
+    });
+  }
+
+  function renderMarcadoresNuevos() {
+    stage.querySelectorAll(".marker.nueva").forEach((el) => el.remove());
+    BC_DOORS.forEach((d) => {
+      if (!nuevo[d.id]) return;
+      const m = document.createElement("div");
+      m.className = "marker nueva";
+      m.style.left = nuevo[d.id].x + "%";
+      m.style.top = nuevo[d.id].y + "%";
+      m.style.background = d.accent;
+      m.innerHTML = `<span>${d.mono}</span>`;
+      stage.appendChild(m);
+    });
+  }
+
+  function actualizarSalida() {
+    const lineas = BC_DOORS.map((d) => {
+      const c = nuevo[d.id];
+      if (!c) return `// ${d.id}: sin marcar todavía`;
+      return `${d.id}:  xPct: "${c.x.toFixed(1)}%",  yPct: "${c.y.toFixed(1)}%",`;
+    });
+    salida.value = lineas.join("\\n");
+  }
+
+  stage.addEventListener("click", (e) => {
+    const rect = img.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    nuevo[activa] = { x, y };
+    renderPuertas();
+    renderMarcadoresNuevos();
+    actualizarSalida();
+
+    // avanza automáticamente a la siguiente puerta sin marcar
+    const siguiente = BC_DOORS.find((d) => !nuevo[d.id]);
+    if (siguiente) activa = siguiente.id;
+    renderPuertas();
+  });
+
+  document.getElementById("btn-copiar").addEventListener("click", () => {
+    salida.select();
+    document.execCommand("copy");
+  });
+
+  img.addEventListener("load", () => {
+    renderMarcadoresActuales();
+  });
+  if (img.complete) renderMarcadoresActuales();
+
+  renderPuertas();
+  actualizarSalida();
+})();
+</script>
+</body>
+</html>

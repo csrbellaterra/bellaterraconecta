@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player — Bellaterra Conecta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="aviso-maqueta">MAQUETA v4 — página de puerta generada, contenido real, diseño provisional.</div>
+
+<div class="door-hero-full">
+  <div class="door-hero-backdrop" style="background-image:url('assets/player/pistas-1.jpg')"></div>
+  <img class="door-hero-media" src="assets/player/pistas-1.jpg" alt="Player — Bellaterra Conecta">
+  <div class="door-hero-scrim" aria-hidden="true"></div>
+  <a href="index.html" class="volver" id="btn-volver">← Volver</a>
+  <div class="door-hero-caption">
+    <span class="door-hero-eyebrow" style="background:#16302a">Deporte, salud, comunidad</span>
+    <h1>Player</h1>
+  </div>
+  <a href="#contenido" class="hero-scroll-cue">
+    <span>Descubre más</span>
+    <span class="linea" aria-hidden="true"></span>
+  </a>
+</div>
+
+<main class="door-page-main" id="contenido">
+  <div class="door-page-eyebrow">
+    <span class="barra" style="background:#16302a"></span>
+    <div>
+      <h1 class="door-page-title">Player</h1>
+      <p class="door-page-tagline">Deporte, salud, comunidad</p>
+    </div>
+  </div>
+
+  <p class="door-page-desc">Las pistas de pickleball son el uso principal de esta puerta: deporte, salud y comunidad al aire libre, en el mismo entorno donde ya se juegan partidas cada semana.</p>
+
+  
+
+  <p class="door-page-notice">El gimnasio está disponible como amenity de fin de semana — de lunes a viernes está alquilado a un entrenador personal.</p>
+
+  <div class="door-page-gallery">
+    <figure><img src="assets/player/pistas-2.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/player/pistas-3.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/player/pistas-4.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/player/pistas-5.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/player/pistas-6.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/player/gym-1.jpg" alt="Fines de semana" loading="lazy"><figcaption>Fines de semana</figcaption></figure>
+    <figure><img src="assets/player/gym-2.jpg" alt="Fines de semana" loading="lazy"><figcaption>Fines de semana</figcaption></figure>
+  </div>
+
+  <div class="door-page-pricing">
+      <span class="badge" style="color:#16302a">59,90€ / año</span>
+      <p class="titulo">Abonado Plasty Player</p>
+      <ul><li>Bonos de sesión a precio reducido</li><li>Precio especial en alquiler de Party los sábados</li><li>Precio especial en eventos de pickleball</li></ul>
+    </div>
+
+  
+
+  
+
+  <div id="form-zone">
+    <form class="door-page-form" id="door-form">
+      <label>Nombre<input type="text" required></label>
+      <label>Email<input type="email" required></label>
+      <label>Mensaje<textarea rows="3"></textarea></label>
+      <button type="submit" style="background:#16302a">Hazte Abonado Plasty Player</button>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>© 1967 — Bellaterra Conecta</span>
+  <a href="index.html">← Todas las puertas</a>
+</footer>
+
+<script src="doors-data.js"></script>
+<script src="transition.js"></script>
+<script>
+(function () {
+  const DOOR_ID = "player";
+  const door = BC_DOORS.find(d => d.id === DOOR_ID);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    BCTransition.revealOnLoad({ color: door.accent, image: door.heroImage });
+  });
+
+  document.getElementById("btn-volver").addEventListener("click", (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    BCTransition.zoomOutBack({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      color: door.accent,
+      doorId: DOOR_ID,
+      href: "index.html",
+    });
+  });
+
+  const form = document.getElementById("door-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      document.getElementById("form-zone").innerHTML =
+        '<div class="door-page-gracias"><p>¡Gracias!</p><p>Hemos recibido tu solicitud sobre Player. Te contactaremos pronto.</p></div>';
+    });
+  }
+})();
+</script>
+</body>
+</html>

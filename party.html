@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Party — Bellaterra Conecta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="aviso-maqueta">MAQUETA v4 — página de puerta generada, contenido real, diseño provisional.</div>
+
+<div class="door-hero-full">
+  <div class="door-hero-backdrop" style="background-image:url('assets/party/piscina-1.jpg')"></div>
+  <img class="door-hero-media" src="assets/party/piscina-1.jpg" alt="Party — Bellaterra Conecta">
+  <div class="door-hero-scrim" aria-hidden="true"></div>
+  <a href="index.html" class="volver" id="btn-volver">← Volver</a>
+  <div class="door-hero-caption">
+    <span class="door-hero-eyebrow" style="background:#d97b3f">Celebraciones, familias</span>
+    <h1>Party</h1>
+  </div>
+  <a href="#contenido" class="hero-scroll-cue">
+    <span>Descubre más</span>
+    <span class="linea" aria-hidden="true"></span>
+  </a>
+</div>
+
+<main class="door-page-main" id="contenido">
+  <div class="door-page-eyebrow">
+    <span class="barra" style="background:#d97b3f"></span>
+    <div>
+      <h1 class="door-page-title">Party</h1>
+      <p class="door-page-tagline">Celebraciones, familias</p>
+    </div>
+  </div>
+
+  <p class="door-page-desc">La piscina y los jardines acogen celebraciones y encuentros familiares — estas son fotos reales de eventos ya celebrados en la finca, no imágenes de stock.</p>
+
+  
+
+  <p class="door-page-notice">El porche trasero se comparte con la puerta Impact.</p><p class="door-page-notice">Precio especial en alquiler de Party los sábados para Abonados Plasty Player.</p>
+
+  <div class="door-page-gallery">
+    <figure><img src="assets/party/piscina-2.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/party/piscina-3.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/party/piscina-4.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/party/piscina-5.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/party/evento-real-1.jpg" alt="Evento real" loading="lazy"><figcaption>Evento real</figcaption></figure>
+    <figure><img src="assets/party/evento-real-2.jpg" alt="Evento real" loading="lazy"><figcaption>Evento real</figcaption></figure>
+    <figure><img src="assets/party/evento-real-3.jpg" alt="Evento real" loading="lazy"><figcaption>Evento real</figcaption></figure>
+    <figure><img src="assets/party/porche-1.jpg" alt="Espacio compartido" loading="lazy"><figcaption>Espacio compartido</figcaption></figure>
+  </div>
+
+  
+
+  <div class="door-page-consult">
+      <p class="titulo">Servicios a consultar</p>
+      <div class="pastillas"><span>Fotografía</span><span>Vídeo</span><span>DJ</span><span>Decoración</span><span>Barra de bebidas</span><span>Carpa</span><span>Catering a medida para bodas</span></div>
+    </div>
+
+  
+
+  <div id="form-zone">
+    <form class="door-page-form" id="door-form">
+      <label>Nombre<input type="text" required></label>
+      <label>Email<input type="email" required></label>
+      <label>Mensaje<textarea rows="3"></textarea></label>
+      <button type="submit" style="background:#d97b3f">Solicitar presupuesto</button>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>© 1967 — Bellaterra Conecta</span>
+  <a href="index.html">← Todas las puertas</a>
+</footer>
+
+<script src="doors-data.js"></script>
+<script src="transition.js"></script>
+<script>
+(function () {
+  const DOOR_ID = "party";
+  const door = BC_DOORS.find(d => d.id === DOOR_ID);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    BCTransition.revealOnLoad({ color: door.accent, image: door.heroImage });
+  });
+
+  document.getElementById("btn-volver").addEventListener("click", (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    BCTransition.zoomOutBack({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      color: door.accent,
+      doorId: DOOR_ID,
+      href: "index.html",
+    });
+  });
+
+  const form = document.getElementById("door-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      document.getElementById("form-zone").innerHTML =
+        '<div class="door-page-gracias"><p>¡Gracias!</p><p>Hemos recibido tu solicitud sobre Party. Te contactaremos pronto.</p></div>';
+    });
+  }
+})();
+</script>
+</body>
+</html>

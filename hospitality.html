@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospitality — Bellaterra Conecta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="aviso-maqueta">MAQUETA v4 — página de puerta generada, contenido real, diseño provisional.</div>
+
+<div class="door-hero-full">
+  <div class="door-hero-backdrop" style="background-image:url('assets/hospitality/hab1-piscina-1.jpg')"></div>
+  <img class="door-hero-media" src="assets/hospitality/hab1-piscina-1.jpg" alt="Hospitality — Bellaterra Conecta">
+  <div class="door-hero-scrim" aria-hidden="true"></div>
+  <a href="index.html" class="volver" id="btn-volver">← Volver</a>
+  <div class="door-hero-caption">
+    <span class="door-hero-eyebrow" style="background:#7a5c9e">Alojamiento</span>
+    <h1>Hospitality</h1>
+  </div>
+  <a href="#contenido" class="hero-scroll-cue">
+    <span>Descubre más</span>
+    <span class="linea" aria-hidden="true"></span>
+  </a>
+</div>
+
+<main class="door-page-main" id="contenido">
+  <div class="door-page-eyebrow">
+    <span class="barra" style="background:#7a5c9e"></span>
+    <div>
+      <h1 class="door-page-title">Hospitality</h1>
+      <p class="door-page-tagline">Alojamiento</p>
+    </div>
+  </div>
+
+  <p class="door-page-desc">Cuatro habitaciones reales, cada una con su propio carácter, dentro de la misma finca donde ocurre todo lo demás.</p>
+
+  
+
+  
+
+  <div class="door-page-gallery">
+    <figure><img src="assets/hospitality/hab1-piscina-2.jpg" alt="Cerca de la piscina" loading="lazy"><figcaption>Cerca de la piscina</figcaption></figure>
+    <figure><img src="assets/hospitality/hab1-piscina-3.jpg" alt="Cerca de la piscina" loading="lazy"><figcaption>Cerca de la piscina</figcaption></figure>
+    <figure><img src="assets/hospitality/hab2-terraza-1.jpg" alt="Con terraza" loading="lazy"><figcaption>Con terraza</figcaption></figure>
+    <figure><img src="assets/hospitality/hab2-terraza-2.jpg" alt="Con terraza" loading="lazy"><figcaption>Con terraza</figcaption></figure>
+    <figure><img src="assets/hospitality/hab-literas-1.jpg" alt="Literas — vistas y acceso a zona de empresas" loading="lazy"><figcaption>Literas — vistas y acceso a zona de empresas</figcaption></figure>
+    <figure><img src="assets/hospitality/hab-literas-2.jpg" alt="Literas — vistas y acceso a zona de empresas" loading="lazy"><figcaption>Literas — vistas y acceso a zona de empresas</figcaption></figure>
+    <figure><img src="assets/hospitality/hab-abajo-1.jpg" alt="Cerca de gimnasio y pistas" loading="lazy"><figcaption>Cerca de gimnasio y pistas</figcaption></figure>
+    <figure><img src="assets/hospitality/hab-abajo-2.jpg" alt="Cerca de gimnasio y pistas" loading="lazy"><figcaption>Cerca de gimnasio y pistas</figcaption></figure>
+  </div>
+
+  
+
+  
+
+  <p style="font-size:14px;color:var(--texto-suave);font-style:italic;margin:0 0 28px;">Más información próximamente.</p>
+
+  <div id="form-zone">
+    <form class="door-page-form" id="door-form">
+      <label>Nombre<input type="text" required></label>
+      <label>Email<input type="email" required></label>
+      <label>Mensaje<textarea rows="3"></textarea></label>
+      <button type="submit" style="background:#7a5c9e">Solicitar información</button>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>© 1967 — Bellaterra Conecta</span>
+  <a href="index.html">← Todas las puertas</a>
+</footer>
+
+<script src="doors-data.js"></script>
+<script src="transition.js"></script>
+<script>
+(function () {
+  const DOOR_ID = "hospitality";
+  const door = BC_DOORS.find(d => d.id === DOOR_ID);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    BCTransition.revealOnLoad({ color: door.accent, image: door.heroImage });
+  });
+
+  document.getElementById("btn-volver").addEventListener("click", (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    BCTransition.zoomOutBack({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      color: door.accent,
+      doorId: DOOR_ID,
+      href: "index.html",
+    });
+  });
+
+  const form = document.getElementById("door-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      document.getElementById("form-zone").innerHTML =
+        '<div class="door-page-gracias"><p>¡Gracias!</p><p>Hemos recibido tu solicitud sobre Hospitality. Te contactaremos pronto.</p></div>';
+    });
+  }
+})();
+</script>
+</body>
+</html>

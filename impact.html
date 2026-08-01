@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impact — Bellaterra Conecta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="aviso-maqueta">MAQUETA v4 — página de puerta generada, contenido real, diseño provisional.</div>
+
+<div class="door-hero-full">
+  <div class="door-hero-backdrop" style="background-image:url('assets/impact-business/comedor-1.jpg')"></div>
+  <img class="door-hero-media" src="assets/impact-business/comedor-1.jpg" alt="Impact — Bellaterra Conecta">
+  <div class="door-hero-scrim" aria-hidden="true"></div>
+  <a href="index.html" class="volver" id="btn-volver">← Volver</a>
+  <div class="door-hero-caption">
+    <span class="door-hero-eyebrow" style="background:#2d5c8a">Empresas, team building</span>
+    <h1>Impact</h1>
+  </div>
+  <a href="#contenido" class="hero-scroll-cue">
+    <span>Descubre más</span>
+    <span class="linea" aria-hidden="true"></span>
+  </a>
+</div>
+
+<main class="door-page-main" id="contenido">
+  <div class="door-page-eyebrow">
+    <span class="barra" style="background:#2d5c8a"></span>
+    <div>
+      <h1 class="door-page-title">Impact</h1>
+      <p class="door-page-tagline">Empresas, team building</p>
+    </div>
+  </div>
+
+  <p class="door-page-desc">El comedor y la terraza chill-out se transforman en un espacio de reuniones y team building para empresas. Nota: esta puerta comparte ubicación física con Business, aunque son experiencias distintas.</p>
+
+  
+
+  <p class="door-page-notice">Este espacio comparte instalaciones — el porche trasero — con la puerta Party.</p><p class="door-page-notice">Extra disponible en toda la finca: cocina equipada (add-on transversal) — a consultar.</p>
+
+  <div class="door-page-gallery">
+    <figure><img src="assets/impact-business/comedor-2.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/impact-business/comedor-3.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/impact-business/comedor-4.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/impact-business/terraza-1.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/impact-business/terraza-2.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/impact-business/terraza-3.jpg" alt="" loading="lazy"></figure>
+    <figure><img src="assets/impact-business/porche-1.jpg" alt="Espacio compartido" loading="lazy"><figcaption>Espacio compartido</figcaption></figure>
+    <figure><img src="assets/general/cocina-1.jpg" alt="Add-on" loading="lazy"><figcaption>Add-on</figcaption></figure>
+  </div>
+
+  
+
+  
+
+  <p style="font-size:14px;color:var(--texto-suave);font-style:italic;margin:0 0 28px;">Más información próximamente.</p>
+
+  <div id="form-zone">
+    <form class="door-page-form" id="door-form">
+      <label>Nombre<input type="text" required></label>
+      <label>Email<input type="email" required></label>
+      <label>Mensaje<textarea rows="3"></textarea></label>
+      <button type="submit" style="background:#2d5c8a">Solicitar información</button>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>© 1967 — Bellaterra Conecta</span>
+  <a href="index.html">← Todas las puertas</a>
+</footer>
+
+<script src="doors-data.js"></script>
+<script src="transition.js"></script>
+<script>
+(function () {
+  const DOOR_ID = "impact";
+  const door = BC_DOORS.find(d => d.id === DOOR_ID);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    BCTransition.revealOnLoad({ color: door.accent, image: door.heroImage });
+  });
+
+  document.getElementById("btn-volver").addEventListener("click", (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    BCTransition.zoomOutBack({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      color: door.accent,
+      doorId: DOOR_ID,
+      href: "index.html",
+    });
+  });
+
+  const form = document.getElementById("door-form");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      document.getElementById("form-zone").innerHTML =
+        '<div class="door-page-gracias"><p>¡Gracias!</p><p>Hemos recibido tu solicitud sobre Impact. Te contactaremos pronto.</p></div>';
+    });
+  }
+})();
+</script>
+</body>
+</html>
